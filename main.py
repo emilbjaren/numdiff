@@ -3,6 +3,7 @@ import scipy as sp
 import scipy.linalg
 import matplotlib.pyplot as plt
 
+from evaluator import Evaluator
 from explicit_euler import ExplicitEuler
 from lte import LTE
 
@@ -15,8 +16,23 @@ def first_test():
     plt.plot(solver.grid, solver.us)
     plt.show()
 
+def evaluator_test():
+    ivp = LTE(t0=0, T=1, y0=np.array([2]), A=np.array([[-1]]))
+    evaluator = Evaluator(ivp, ExplicitEuler)
+
+    # Varying time
+    grid, errs = evaluator.errvstime(10)
+    plt.plot(grid, errs)
+    plt.show()
+
+    # Varying step size h
+    grid, errs = evaluator.errvsh(np.array([10, 20, 25]))
+    plt.plot(grid, errs)
+    plt.show()
+
 def main():
     first_test()
+    evaluator_test()
 
 if __name__ == "__main__":
     main()
