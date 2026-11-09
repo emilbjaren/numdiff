@@ -11,8 +11,10 @@ class Evaluator():
         self.ivp = ivp
         self.solver_cls = solver_cls
 
-    def errvstime(self, N: int) -> tuple[np.array, np.array]:
+    def errvstime(self, N: int, relative=False) -> tuple[np.array, np.array]:
         """Function to calculate error over time. 
+
+        Absolute error by default, relative if selected.
 
         Returns: two np arrays, one with the grid (x) and one with errors (y).
         
@@ -25,16 +27,28 @@ class Evaluator():
 
         err_list = list()
         for un, yn in zip(us, ys):
-            err_list.append(scipy.linalg.norm(un - yn))
+            err = scipy.linalg.norm(un - yn)
+            if relative:
+                err = err / scipy.linalg.norm(yn)
+            
+            err_list.append(err)
+
 
         errs = np.array(err_list)
 
         return solver.grid, errs
 
-    def errvsh(self, Ns: np.array) -> tuple[np.array, np.array]:
+    def errvsh(self, Ns: np.array, relative=False) -> tuple[np.array, np.array]:
+        """Function to calculate error over time. 
+
+        Absolute error by default, relative if selected.
+
+        Returns: two np arrays, one with the grid (x) and one with errors (y).
+        
+        """
         t = self.ivp.T - self.ivp.t0
         y_last = self.ivp.exact(self.ivp.T)
-        errs = []
+        err_list = []
         hs = []
 
         for N in Ns:
@@ -43,10 +57,14 @@ class Evaluator():
             solver.integrate()
             u_last = solver.us[len(solver.us) - 1]
             err = scipy.linalg.norm(y_last - u_last)
-            errs.append(err)
+            # Turn into relative error if option i selected
+            if relative:
+                err = err / scipy.linalg.norm(y_last)
+
+            err_list.append(err)
             hs.append(h)
 
-        return hs, errs
+        return np.array(hs), np.array(err_list)
             
 
 

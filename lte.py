@@ -11,8 +11,8 @@ class LTE(IVP):
         self.A = A
 
     def f(self, t: np.number, y: np.array):
-        if len(self.A) == 1: # Operatorn @ funkar inte när A är 1x1
-            return self.A * y
+        # if type(y) is np.float64: # Operatorn @ funkar inte när A är 1x1
+          #  return self.A * y
 
         return self.A @ y
 

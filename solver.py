@@ -18,10 +18,12 @@ class Solver():
 
     def integrate(self) -> None:
         # Skapar array med rätt antal platser från början
-        self.us = np.empty(self.N + 1, float)
-        self.us.put(0, self.ivp.y0)
+        # Lite knas kod eftersom vi måste göra den tomma arrayen på samma form som y0
+        state_shape = np.shape(self.ivp.y0)
+        self.us = np.empty((self.N + 1,) + state_shape, dtype=float)
+        self.us[0] = self.ivp.y0
         for i, tn in enumerate(self.grid[1:], 1):
             un = self.step(tn, self.us[i-1])
-            self.us.put(i, un)
+            self.us[i] = un
 
     
