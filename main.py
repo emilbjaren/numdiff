@@ -162,10 +162,10 @@ def main():
     # first_test()
     # evaluator_test()
     # task71_72()
-    # task73()
+    task73()
     # test_implicit()
     # implicit_evaluator()
-    implicit_matrix()
+    # implicit_matrix()
 
 if __name__ == "__main__":
     main()
