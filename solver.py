@@ -10,7 +10,6 @@ class Solver():
         self.ivp = ivp
         self.N = N
         self.tol = tol
-        self.k = 1
         self.h = (ivp.T - ivp.t0) / N if not adaptive else self._calc_h0() # special shit
         self.grid = np.linspace(ivp.t0, ivp.T, N + 1) if not adaptive else []
 
@@ -22,7 +21,7 @@ class Solver():
         raise NotImplementedError
 
     def newstep(self) -> None:
-        term1 = (self.tol / self.errest)**(2 / self.k)
+        term1 = (self.tol / self.errest)**(2 / (3 * self.k))
         term2 = (self.tol / self.errestold)**(-1 / (3 * self.k))
 
         self.h = term1 * term2 * self.h
@@ -52,7 +51,7 @@ class Solver():
         while t < self.ivp.T:
             self.h = min(self.h, self.ivp.T - t) # Se till att vi inte går förbi T
             un = self.step(t, u)
-            tn = min(t + self.h, self.ivp.T) # TODO: Behövs detta
+            tn = min(t + self.h, self.ivp.T) # Behövs denna?
 
             self.grid.append(tn)
             self.us.append(un)
@@ -60,6 +59,9 @@ class Solver():
 
             if t < self.ivp.T:
                 self.newstep()
+
+        self.us = np.array(self.us)
+        self.grid = np.array(self.grid)
       
 
     def _calc_h0(self) -> float:
